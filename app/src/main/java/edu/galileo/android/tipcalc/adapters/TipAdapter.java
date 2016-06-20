@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import java.net.ContentHandler;
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.Bind;
@@ -21,18 +22,27 @@ import edu.galileo.android.tipcalc.models.TipRecord;
  */
 public class TipAdapter extends RecyclerView.Adapter<TipAdapter.ViewHolder> {
 
-    Context context;
-    List<TipRecord> dataset;
+    private Context context;
+    private List<TipRecord> dataset;
+    private OnItemClickListener onItemClickListener;
 
-    public TipAdapter(Context context, List<TipRecord> dataset) {
+    public TipAdapter(Context context, List<TipRecord> dataset, OnItemClickListener onItemClickListener) {
         this.context = context;
-        this.dataset = dataset;
+        this.dataset =  dataset;
+        this.onItemClickListener = onItemClickListener;
+
+    }
+
+    public TipAdapter(Context context, OnItemClickListener onItemClickListener) {
+        this.context = context;
+        this.dataset =  new ArrayList<TipRecord>();
+        this.onItemClickListener = onItemClickListener;
 
     }
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        Log.d("TAG","onCreateViewHolder called");
+
         View view = LayoutInflater.from(parent.getContext())
                         .inflate(R.layout.item_row, parent, false);
 
@@ -43,12 +53,15 @@ public class TipAdapter extends RecyclerView.Adapter<TipAdapter.ViewHolder> {
     public void onBindViewHolder(ViewHolder holder, int position) {
 
         TipRecord element = dataset.get(position);
-        Log.d("TAG","onBindViewHolder called");
+
         String strTip = String.format(context.getString(R.string.global_message_tip),
                 element.getTip());
-        if (!strTip.isEmpty()){
-            holder.txtContent.setText(strTip);
-        }
+
+        holder.txtContent.setText(strTip);
+        holder.txtDate.setText(element.getDateFormatted());
+
+
+        holder.setOnClickListener(element, onItemClickListener);
 
     }
 
@@ -73,11 +86,22 @@ public class TipAdapter extends RecyclerView.Adapter<TipAdapter.ViewHolder> {
 
         @Bind(R.id.txtContent)
         TextView txtContent;
+        @Bind(R.id.txtDate)
+        TextView txtDate;
 
         public ViewHolder(View itemView){
             super(itemView);
 
             ButterKnife.bind(this,itemView);
+        }
+
+        public void setOnClickListener(final TipRecord element, final OnItemClickListener onItemClickListener) {
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    onItemClickListener.onItemClick(element);
+                }
+            });
         }
     }
 }

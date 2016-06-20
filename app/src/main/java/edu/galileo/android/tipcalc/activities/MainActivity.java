@@ -53,7 +53,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
-        Log.d("Main", "Main called");
         TipHistoryListFragment fragment = (TipHistoryListFragment)
                                                 getSupportFragmentManager().findFragmentById(R.id.fragmentList);
         //Guarda la instancia del fragmento, se puede recrear de nuevo(volver a crearse)
